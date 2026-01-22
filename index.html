@@ -1,144 +1,209 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prontuário Médico Online</title>
-    
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1a237e">
-    
-    <!-- Estilos -->
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Bibliotecas PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda Zen com Backup</title>
+
+  <!-- PWA -->
+  <meta name="theme-color" content="#4361ee">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png">
+
+  <link rel="stylesheet" href="./style.css">
+
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Barra Superior -->
-    <header class="header">
-        <div class="header-left">
-            <div class="logo">
-                <i class="fas fa-stethoscope"></i>
-                <h1>Prontuário<span>Med</span></h1>
-            </div>
-            <div class="sync-status" id="syncStatus">
-                <i class="fas fa-wifi"></i> Online
-            </div>
-        </div>
-        
-        <div class="header-right">
-            <button class="btn-icon" id="searchBtn" title="Buscar">
-                <i class="fas fa-search"></i>
-            </button>
-            <button class="btn-icon" id="notifyBtn" title="Notificações">
-                <i class="fas fa-bell"></i>
-                <span class="badge">3</span>
-            </button>
-            <button class="btn-icon" id="userBtn" title="Usuário">
-                <i class="fas fa-user-md"></i>
-            </button>
-            <button class="btn" id="installBtn">
-                <i class="fas fa-download"></i> Instalar App
-            </button>
-        </div>
+  <div class="container">
+    <header>
+      <div class="logo">🧠</div>
+      <h1>Agenda Zen com Backup</h1>
+      <p class="subtitle">Organize seu dia e mantenha seus dados seguros</p>
     </header>
 
-    <!-- Menu Lateral -->
-    <nav class="sidebar">
-        <div class="sidebar-header">
-            <h3>Menu Principal</h3>
-        </div>
-        
-        <ul class="nav-menu">
-            <li class="nav-item active" data-page="dashboard">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </li>
-            <li class="nav-item" data-page="pacientes">
-                <i class="fas fa-users"></i>
-                <span>Pacientes</span>
-                <span class="count" id="pacientesCount">0</span>
-            </li>
-            <li class="nav-item" data-page="consultas">
-                <i class="fas fa-calendar-check"></i>
-                <span>Consultas</span>
-                <span class="count" id="consultasCount">0</span>
-            </li>
-            <li class="nav-item" data-page="prontuario">
-                <i class="fas fa-file-medical"></i>
-                <span>Prontuário</span>
-            </li>
-            <li class="nav-item" data-page="receituario">
-                <i class="fas fa-prescription"></i>
-                <span>Receituário</span>
-            </li>
-            <li class="nav-item" data-page="atestado">
-                <i class="fas fa-file-contract"></i>
-                <span>Atestado</span>
-            </li>
-            <li class="nav-item" data-page="orcamento">
-                <i class="fas fa-file-invoice-dollar"></i>
-                <span>Orçamento</span>
-            </li>
-            <li class="nav-item" data-page="relatorios">
-                <i class="fas fa-chart-bar"></i>
-                <span>Relatórios</span>
-            </li>
-            <li class="nav-item" data-page="config">
-                <i class="fas fa-cog"></i>
-                <span>Configurações</span>
-            </li>
-        </ul>
-        
-        <div class="sidebar-footer">
-            <div class="storage-info">
-                <div class="storage-bar">
-                    <div class="storage-fill" style="width: 65%"></div>
-                </div>
-                <small>65% usado</small>
-            </div>
-            <button class="btn-backup" id="backupBtn">
-                <i class="fas fa-database"></i> Backup
-            </button>
-        </div>
-    </nav>
-
-    <!-- Conteúdo Principal -->
-    <main class="main-content">
-        <!-- Páginas serão carregadas aqui dinamicamente -->
-        <div id="pageContent"></div>
-    </main>
-
-    <!-- Modal Genérico -->
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">Modal</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body" id="modalBody">
-                <!-- Conteúdo do modal -->
-            </div>
-        </div>
+    <div class="backup-controls">
+      <button class="backup-btn" onclick="exportarBackup()">
+        <i class="fas fa-download"></i> Exportar Backup
+      </button>
+      <button class="backup-btn import" onclick="abrirModalImportar()">
+        <i class="fas fa-upload"></i> Importar Backup
+      </button>
+      <button class="backup-btn secondary" onclick="limparDados()">
+        <i class="fas fa-trash"></i> Limpar Tudo
+      </button>
     </div>
 
-    <!-- Scripts -->
-    <script src="js/db.js"></script>
-    <script src="js/pdf.js"></script>
-    <script src="js/app.js"></script>
-    
-    <script>
-        // Registrar Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('Service Worker registrado'))
-                .catch(err => console.log('Erro:', err));
-        }
-    </script>
+    <div class="tabs">
+      <button class="tab active" onclick="mostrarAba('hoje')">
+        <i class="fas fa-sun"></i> Hoje
+      </button>
+      <button class="tab" onclick="mostrarAba('tarefas')">
+        <i class="fas fa-tasks"></i> Tarefas
+      </button>
+      <button class="tab" onclick="mostrarAba('notas')">
+        <i class="fas fa-sticky-note"></i> Notas
+      </button>
+      <button class="tab" onclick="mostrarAba('pdf')">
+        <i class="fas fa-file-pdf"></i> Relatório
+      </button>
+    </div>
+
+    <div id="hoje" class="content active">
+      <div class="card focus">
+        <h2><i class="fas fa-bullseye"></i> Foco do Dia</h2>
+        <p id="foco-texto" style="font-size: 1.3rem; margin: 15px 0; min-height: 30px;">
+          Clique no botão para definir seu foco principal
+        </p>
+        <button onclick="definirFoco()">
+          <i class="fas fa-edit"></i> Definir Foco
+        </button>
+      </div>
+
+      <div class="card">
+        <h2><i class="fas fa-list-check"></i> Tarefas de Hoje</h2>
+        <div id="tarefas-hoje" class="task-list"></div>
+        <button class="full success" onclick="novaTarefaRapida()">
+          <i class="fas fa-plus-circle"></i> Adicionar Tarefa Rápida
+        </button>
+      </div>
+
+      <div class="progress-container">
+        <div class="progress-text">
+          <span>Progresso do Dia</span>
+          <span id="texto-progresso">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="barra-progresso"></div>
+        </div>
+      </div>
+
+      <div class="tip">
+        <h3><i class="fas fa-lightbulb"></i> Dica do Dia</h3>
+        <p id="dica-texto">Comece pelo que é mais importante!</p>
+      </div>
+    </div>
+
+    <div id="tarefas" class="content">
+      <div class="card">
+        <h2><i class="fas fa-plus-circle"></i> Nova Tarefa</h2>
+        <input type="text" id="nova-tarefa-input" placeholder="O que precisa fazer?" autocomplete="off">
+        <select id="prioridade">
+          <option value="normal">Prioridade Normal</option>
+          <option value="importante">⭐ Importante</option>
+          <option value="urgente">🚨 Urgente</option>
+        </select>
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+          <button onclick="adicionarTarefa()" style="flex: 1;">
+            <i class="fas fa-check"></i> Adicionar
+          </button>
+          <button onclick="limparFormularioTarefa()" class="secondary" style="flex: 1;">
+            <i class="fas fa-times"></i> Limpar
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><i class="fas fa-tasks"></i> Todas as Tarefas</h2>
+        <div id="lista-tarefas" class="task-list"></div>
+      </div>
+    </div>
+
+    <div id="notas" class="content">
+      <div class="card">
+        <h2><i class="fas fa-edit"></i> Nova Nota</h2>
+        <input type="text" id="titulo-nota" placeholder="Título da nota" autocomplete="off">
+        <textarea id="texto-nota" placeholder="Escreva sua nota aqui..." rows="6"></textarea>
+        <div style="text-align: right; margin-bottom: 15px;">
+          <span id="contador-caracteres">0/500 caracteres</span>
+        </div>
+        <button class="full success" onclick="salvarNota()">
+          <i class="fas fa-save"></i> Salvar Nota
+        </button>
+      </div>
+
+      <div class="card">
+        <h2><i class="fas fa-book"></i> Notas Salvas</h2>
+        <div id="lista-notas"></div>
+      </div>
+    </div>
+
+    <div id="pdf" class="content">
+      <div class="card pdf">
+        <h2><i class="fas fa-file-pdf"></i> Gerar Relatório</h2>
+        <p>Exporte seu progresso em PDF com design profissional</p>
+
+        <div style="display: flex; gap: 15px; margin: 30px 0; flex-wrap: wrap; justify-content: center;">
+          <button onclick="gerarRelatorio('diario')" style="min-width: 200px;">
+            <i class="fas fa-calendar-day"></i> Relatório Diário
+          </button>
+          <button onclick="gerarRelatorio('semanal')" style="min-width: 200px;">
+            <i class="fas fa-chart-line"></i> Relatório Semanal
+          </button>
+          <button onclick="gerarRelatorio('completo')" style="min-width: 200px;">
+            <i class="fas fa-file-alt"></i> Relatório Completo
+          </button>
+        </div>
+
+        <div class="preview" id="preview-pdf">
+          <h3>Pré-visualização</h3>
+          <p>Selecione um tipo de relatório acima para visualizar</p>
+        </div>
+
+        <button class="full" onclick="baixarPDF()">
+          <i class="fas fa-download"></i> Baixar PDF
+        </button>
+
+        <p style="margin-top: 15px; color: #666; font-size: 0.9rem;">
+          <i class="fas fa-info-circle"></i> O backup também é feito automaticamente ao gerar PDF
+        </p>
+      </div>
+
+      <div class="tip">
+        <h3><i class="fas fa-shield-alt"></i> Backup Automático</h3>
+        <p>Seus dados são salvos automaticamente no navegador e você pode exportar para JSON a qualquer momento!</p>
+      </div>
+    </div>
+
+    <footer>
+      <p>Agenda Zen com Backup © 2026 | Seus dados estão seguros</p>
+      <p style="margin-top: 10px; font-size: 0.9rem;">
+        <i class="fas fa-database"></i> Último backup: <span id="ultimo-backup">Agora mesmo</span>
+      </p>
+    </footer>
+  </div>
+
+  <div id="modal-importar" class="modal">
+    <div class="modal-content">
+      <h3><i class="fas fa-upload"></i> Importar Backup</h3>
+      <p style="margin-bottom: 20px;">Selecione o arquivo JSON de backup:</p>
+
+      <input type="file" id="arquivo-backup" accept=".json" style="margin: 15px 0;">
+
+      <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+        <p style="font-weight: 600; margin-bottom: 10px;">Opções de importação:</p>
+        <label style="display: block; margin: 10px 0;">
+          <input type="radio" name="tipo-importacao" value="sobrescrever" checked>
+          Sobrescrever todos os dados
+        </label>
+        <label style="display: block; margin: 10px 0;">
+          <input type="radio" name="tipo-importacao" value="mesclar">
+          Mesclar com dados atuais
+        </label>
+      </div>
+
+      <div style="display: flex; gap: 15px; margin-top: 30px;">
+        <button onclick="importarBackup()" style="flex: 1;">
+          <i class="fas fa-check"></i> Importar
+        </button>
+        <button onclick="fecharModal()" class="secondary" style="flex: 1;">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
 </body>
 </html>
