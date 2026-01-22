@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prontuário Médico Online</title>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a237e">
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bibliotecas PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <!-- Barra Superior -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <i class="fas fa-stethoscope"></i>
+                <h1>Prontuário<span>Med</span></h1>
+            </div>
+            <div class="sync-status" id="syncStatus">
+                <i class="fas fa-wifi"></i> Online
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <button class="btn-icon" id="searchBtn" title="Buscar">
+                <i class="fas fa-search"></i>
+            </button>
+            <button class="btn-icon" id="notifyBtn" title="Notificações">
+                <i class="fas fa-bell"></i>
+                <span class="badge">3</span>
+            </button>
+            <button class="btn-icon" id="userBtn" title="Usuário">
+                <i class="fas fa-user-md"></i>
+            </button>
+            <button class="btn" id="installBtn">
+                <i class="fas fa-download"></i> Instalar App
+            </button>
+        </div>
+    </header>
+
+    <!-- Menu Lateral -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu Principal</h3>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item active" data-page="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </li>
+            <li class="nav-item" data-page="pacientes">
+                <i class="fas fa-users"></i>
+                <span>Pacientes</span>
+                <span class="count" id="pacientesCount">0</span>
+            </li>
+            <li class="nav-item" data-page="consultas">
+                <i class="fas fa-calendar-check"></i>
+                <span>Consultas</span>
+                <span class="count" id="consultasCount">0</span>
+            </li>
+            <li class="nav-item" data-page="prontuario">
+                <i class="fas fa-file-medical"></i>
+                <span>Prontuário</span>
+            </li>
+            <li class="nav-item" data-page="receituario">
+                <i class="fas fa-prescription"></i>
+                <span>Receituário</span>
+            </li>
+            <li class="nav-item" data-page="atestado">
+                <i class="fas fa-file-contract"></i>
+                <span>Atestado</span>
+            </li>
+            <li class="nav-item" data-page="orcamento">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>Orçamento</span>
+            </li>
+            <li class="nav-item" data-page="relatorios">
+                <i class="fas fa-chart-bar"></i>
+                <span>Relatórios</span>
+            </li>
+            <li class="nav-item" data-page="config">
+                <i class="fas fa-cog"></i>
+                <span>Configurações</span>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="storage-info">
+                <div class="storage-bar">
+                    <div class="storage-fill" style="width: 65%"></div>
+                </div>
+                <small>65% usado</small>
+            </div>
+            <button class="btn-backup" id="backupBtn">
+                <i class="fas fa-database"></i> Backup
+            </button>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+        <!-- Páginas serão carregadas aqui dinamicamente -->
+        <div id="pageContent"></div>
+    </main>
+
+    <!-- Modal Genérico -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Modal</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Conteúdo do modal -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/db.js"></script>
+    <script src="js/pdf.js"></script>
+    <script src="js/app.js"></script>
+    
+    <script>
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker registrado'))
+                .catch(err => console.log('Erro:', err));
+        }
+    </script>
+</body>
+</html>
